@@ -1,0 +1,20 @@
+.tour_review_form_container
+  //- tour Name
+  .tour_review_form
+      div(style="position: absolute;right:1rem;top:1rem") 
+        img.card__picture-img#close_review_form(src='/img/close_icon.svg')
+      form.form.data_review_form
+        .form__group
+          label.form__label(for='reviewLabel') Review
+          textarea#reviewLabel.form__input(rows="4", placeholder='write review here. maximum length 400',maxlength=400, required, name='review')
+        div(style="display:flex;justify-content: space-evenly;align-items: center")
+          div(style="display:flex;align-items: center")
+            .form__group
+              label.form__label(for='ratingLabel') Rate us
+              input#ratingLabel.form__input(type='number', value=`5`, required, min="1", max="5", name='rating', oninput='updateStars(this.value)')
+            .reviews__rating
+              - for (let star = 1; star <= 5; star++)
+                svg.reviews__star(class=`reviews__star--${star <= 5 ? 'active' : 'inactive'}`)
+                  use(xlink:href='/img/icons.svg#icon-star')
+          .form__group
+            button.btn.btn--small.btn--green Save

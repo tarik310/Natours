@@ -1,0 +1,126 @@
+extends base
+mixin navItem(id, link, text, icon, active)
+  li(class=`side-nav-item ${active ? 'side-nav--active' : ''}`, data-id=`${id}`)
+    div(id=`${id}`)
+      a(href=`${link}`)
+        svg
+          use(xlink:href=`img/icons.svg#icon-${icon}`)
+        | #{text}
+
+block content
+  main.main
+    include _reviewForm
+    .user-view
+      nav.user-view__menu
+        ul.side-nav
+          +navItem('settings','#', 'Settings', 'settings', true)
+          +navItem('bookings','#', 'My bookings', 'briefcase')
+          +navItem('reviews','#', 'My reviews', 'star')
+          +navItem('billings','#', 'Billing', 'credit-card')
+
+        - if (user.role === 'admin')
+          .admin-nav
+            h5.admin-nav__heading Admin
+            ul.side-nav
+              +navItem('#', 'Manage tours', 'map')
+              +navItem('#', 'Manage users', 'users')
+              +navItem('#', 'Manage reviews', 'star')
+              +navItem('#', 'Manage bookings', 'briefcase')
+
+      .user-view__content
+        #settings_panel
+          .user-view__form-container
+            h2.heading-secondary.ma-bt-md Your account settings
+            
+            //- WITHOUT API
+            //- form.form.form-user-data(action='/submit-user-data' method='POST')
+            
+            //- WITH API
+            form.form.form-user-data
+              .form__group
+                label.form__label(for='name') Name
+                input#name.form__input(type='text', value=`${user.name}`, required, name='name')
+              .form__group.ma-bt-md
+                label.form__label(for='email') Email address
+                input#email.form__input(type='email', value=`${user.email}`, required, name='email')
+              .form__group.form__photo-upload
+                img.form__user-photo(src=`/img/users/${user.photo}`, alt='User photo')
+                input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+                label(for='photo') Choose new photo
+                
+              .form__group.right
+                button.btn.btn--small.btn--green Save settings
+                
+          .line &nbsp;
+          
+          .user-view__form-container
+            h2.heading-secondary.ma-bt-md Password change
+            form.form.form-user-password
+              .form__group
+                label.form__label(for='password-current') Current password
+                input#password-current.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              .form__group
+                label.form__label(for='password') New password
+                input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              .form__group.ma-bt-lg
+                label.form__label(for='password-confirm') Confirm password
+                input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              .form__group.right
+                button.btn.btn--small.btn--green.btn--save-password Save password
+        #booking_panel(style="display:none")
+          each tour in userTours
+            .user_tour_container
+              .user_tour_card
+                div(style="display:flex")
+                  img.user_tour_imageCover(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+                  div(style="margin-left:1rem")
+                    a.user_tour_name(href=`/tour/${tour.slug}`)= tour.name
+                    h4.card__sub-heading= `${tour.difficulty}-${tour.duration}-day`
+                    .user_tour_card__details
+                      .user_tour_card__data
+                        svg.card__icon(style="margin-right:0.5rem")
+                          use(xlink:href='/img/icons.svg#icon-map-pin')
+                        span= tour.startLocation.description
+                      .user_tour_card__data
+                        svg.card__icon(style="margin-right:0.5rem")
+                          use(xlink:href='/img/icons.svg#icon-calendar')
+                        span= tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
+                      .user_tour_card__data
+                        svg.card__icon(style="margin-right:0.5rem")
+                          use(xlink:href='/img/icons.svg#icon-flag')
+                        span= `${tour.locations.length} stops`
+                      .user_tour_card__data
+                        svg.card__icon(style="margin-right:0.5rem")
+                          use(xlink:href='/img/icons.svg#icon-user')
+                        span= `${tour.maxGroupSize} people`
+                div(style="display:flex;align-items: center")
+                  p
+                    span.card__footer-value= `$${tour.price}`
+                    | 
+                    span.card__footer-text / person
+                  button.review_btn.create_review_btn(data-tour-id=`${tour.id}` data-tour-name=`${tour.name}`) Review tour
+        
+        #reviews_panel(style="display:none")
+          if userReviews.length === 0
+            h1 No reviews Yet
+          else
+            each review in userReviews
+              .reviews_container(id=`review-${review.id}`)
+                .reviewCard
+                  div(style="display:flex;align-items: center;")
+                    div
+                      img.user_tour_imageCover(src=`/img/tours/${review.tour.imageCover}`, alt=`${review.tour.name}`)
+                      h2= review.tour.name
+                      .reviews__rating
+                        each star in [1, 2, 3, 4, 5]
+                          svg.reviews__star(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
+                            use(xlink:href='/img/icons.svg#icon-star')
+                        span=review.rating
+                    div(style="margin-left:1rem")
+                      p.review_text= review.review
+                  div(style="display:flex")
+                    button.review_btn.update_review_btn(data-review-id=`${review.id}` data-tour-id=`${review.tour.id}` data-tour-name=`${review.tour.name}`) Update
+                    img.card__picture-img.delete_review_btn(data-review-id=`${review.id}` style="cursor: pointer; width:30px;" src='/img/trash.svg')
+        #billings_panel(style="display:none")
+          h1 My Billings
+  script(src="/js/account.js") 
