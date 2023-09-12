@@ -1,3 +1,4 @@
+
 # Project Title: Natours - Tours Booking Website
 
 ## Description
@@ -15,3 +16,7 @@ Natours is a modern and user-friendly web application designed to simplify the p
 7. **Responsive Design:** The website is optimized for mobile devices, tablets, and desktops, ensuring a seamless user experience across different screen sizes.
 8. **Search and Filters:** Easily search for tours based on location, duration, activity level, and price range.
 9. **Admin Dashboard:** An admin panel to manage tours, users, reviews, and bookings, with the ability to add, edit, or delete content.
+
+![image](https://github.com/tarik310/Natours/assets/88586285/3ec3e0b2-1e0f-4ede-8545-94fb46b729d3)
+
+![image](https://github.com/tarik310/Natours/assets/88586285/b2a51ac1-1019-41cf-ae0c-5b40b8250923)
